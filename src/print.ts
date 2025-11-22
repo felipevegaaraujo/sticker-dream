@@ -92,8 +92,7 @@ export async function getAllPrinters(): Promise<Printer[]> {
     return printers;
   } catch (error) {
     throw new Error(
-      `Failed to get printers: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to get printers: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -125,8 +124,7 @@ export async function isPrinterEnabled(printerName: string): Promise<boolean> {
     return !isDisabled;
   } catch (error) {
     throw new Error(
-      `Failed to check printer status: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to check printer status: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -148,8 +146,7 @@ export async function enablePrinter(printerName: string): Promise<string> {
     return `Printer "${printerName}" has been enabled and is now accepting jobs`;
   } catch (error) {
     throw new Error(
-      `Failed to enable printer: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to enable printer: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -199,8 +196,7 @@ export async function getPrinterInfo(printerName: string): Promise<string> {
     return stdout;
   } catch (error) {
     throw new Error(
-      `Failed to get printer info: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to get printer info: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -340,8 +336,7 @@ export async function printImage(
     return jobId;
   } catch (error) {
     throw new Error(
-      `Failed to print: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to print: ${error instanceof Error ? error.message : String(error)
       }`
     );
   } finally {
@@ -360,7 +355,7 @@ export async function printImage(
 }
 
 /**
- * Print an image to the first available USB printer
+ * Print an image to the first available printer (USB, WiFi, network, etc.)
  * @param imagePathOrBuffer Path to the image file or a Buffer containing the image data
  * @param options Optional print settings
  * @returns Object containing printer name and job ID
@@ -369,14 +364,14 @@ export async function printToUSB(
   imagePathOrBuffer: string | Buffer,
   options: PrintOptions = {}
 ): Promise<{ printerName: string; jobId: string }> {
-  const usbPrinters = await getUSBPrinters();
+  const allPrinters = await getAllPrinters();
 
-  if (usbPrinters.length === 0) {
-    throw new Error("No USB printers found");
+  if (allPrinters.length === 0) {
+    throw new Error("No printers found");
   }
 
-  // Use the first USB printer or the default one if it's USB
-  const printer = usbPrinters.find((p) => p.isDefault) || usbPrinters[0];
+  // Use the default printer if available, otherwise use the first available printer
+  const printer = allPrinters.find((p) => p.isDefault) || allPrinters[0];
 
   const jobId = await printImage(printer.name, imagePathOrBuffer, options);
 
@@ -398,8 +393,7 @@ export async function getPrintJobStatus(jobId?: string): Promise<string> {
     return stdout;
   } catch (error) {
     throw new Error(
-      `Failed to get job status: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to get job status: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -414,8 +408,7 @@ export async function cancelPrintJob(jobId: string): Promise<void> {
     await execAsync(`cancel ${jobId}`);
   } catch (error) {
     throw new Error(
-      `Failed to cancel job: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to cancel job: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -441,8 +434,7 @@ export async function getAvailableMediaSizes(
     return [];
   } catch (error) {
     throw new Error(
-      `Failed to get media sizes: ${
-        error instanceof Error ? error.message : String(error)
+      `Failed to get media sizes: ${error instanceof Error ? error.message : String(error)
       }`
     );
   }
@@ -481,8 +473,8 @@ export function watchAndResumePrinters(options: {
         const allPrinters = await getAllPrinters();
         printersToCheck = allPrinters.filter(p => printerNames.includes(p.name));
       } else {
-        // Check all USB printers by default
-        printersToCheck = await getUSBPrinters();
+        // Check all printers by default
+        printersToCheck = await getAllPrinters();
       }
 
       // Check each printer

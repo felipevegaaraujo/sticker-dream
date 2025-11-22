@@ -32,7 +32,13 @@ async function generateImage(prompt: string): Promise<Buffer | null> {
 
   const response = await ai.models.generateImages({
     model: imageGen4,
-    prompt: `A black and white kids coloring page.
+    prompt: `Create a simple black-and-white kids coloring page.
+Use thick clean outlines, large open areas for coloring, and no shading or textures.
+The style should feel inspired by Japanese children's illustrators such as Taro Gomi, Sanrio artists, Osamu Tezuka's soft cartoon forms, and Studio Ghibli's gentle character shapes—without copying any specific characters or copyrighted designs.
+Keep the expression cute, friendly, and kawaii.
+Use rounded shapes and simple features suitable for young children.
+No background clutter.
+Black-and-white line art only.
     <image-description>
     ${prompt}
     </image-description>
@@ -111,4 +117,3 @@ serve({
 }, (info) => {
   console.log(`🚀 Server running at http://localhost:${info.port}`);
 });
-

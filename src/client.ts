@@ -6,7 +6,7 @@ const transcriber = await pipeline(
   "Xenova/whisper-tiny.en",
   {
     progress_callback: (event) => {
-      // console.log(event);
+      console.log(event);
     },
   }
 );
@@ -75,8 +75,15 @@ async function resetRecorder() {
     console.log(output);
     recordBtn.textContent = "Dreaming Up...";
 
-    const abortWords = ["BLANK", "NO IMAGE", "NO STICKER", "CANCEL", "ABORT", "START OVER"];
-    if(!text || abortWords.some(word => text.toUpperCase().includes(word))) {
+    const abortWords = [
+      "BLANK",
+      "NO IMAGE",
+      "NO STICKER",
+      "CANCEL",
+      "ABORT",
+      "START OVER",
+    ];
+    if (!text || abortWords.some((word) => text.toUpperCase().includes(word))) {
       transcriptDiv.textContent = "No image generated.";
       recordBtn.classList.remove("loading");
       recordBtn.textContent = "Cancelled";
@@ -87,19 +94,12 @@ async function resetRecorder() {
       return;
     }
 
-    recordBtn.textContent = "Sending to Printer...";
-    await wait(3000);
-    recordBtn.textContent = "Printing...";
-    await wait(1500);
+    await generateAndPrint(text);
 
     // Stop loading state
     recordBtn.classList.remove("loading");
-    recordBtn.textContent = "Printed!";
-    setTimeout(() => {
-      recordBtn.textContent = "Sticker Dream";
-    }, 1000);
+    recordBtn.textContent = "Sticker Dream";
     resetRecorder();
-
   };
 }
 
@@ -112,6 +112,7 @@ recordBtn.addEventListener("pointerdown", async () => {
   // Reset audio chunks
   audioChunks = [];
   console.log(`Media recorder`, mediaRecorder);
+  if (!mediaRecorder) return;
   // Start recording
   mediaRecorder.start();
   console.log(`Media recorder started`);
