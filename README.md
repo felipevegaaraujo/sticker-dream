@@ -32,7 +32,7 @@ GEMINI_API_KEY=your_api_key_here
 Start the backend server:
 
 ```bash
-pnpm server
+pnpm run server
 ```
 
 Start the frontend (in another terminal):
@@ -41,7 +41,7 @@ Start the frontend (in another terminal):
 pnpm dev
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:7768`.
 
 To use your phone, you'll need to visit the page on your local network. Since it uses microphone access, this needs to be a secure origin. I use Cloudflare tunnels for this.
 
